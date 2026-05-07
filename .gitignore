@@ -4,3 +4,4 @@ build
 !results/example_res.csv
 *.pdf
 benchmarks/textos
+*.sdsl

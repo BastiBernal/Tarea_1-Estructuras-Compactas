@@ -159,3 +159,12 @@ sdsl::int_vector<> build_bwt(std::string filename){
     //Constructor de las clases
     return bwt;
 }
+
+size_t file_size(const std::string& filename) {
+	std::ifstream in(filename, std::ios::binary | std::ios::ate);
+	if (!in) {
+		std::cerr << "Error al abrir el archivo para obtener su tamaño\n";
+		return 0;
+	}
+	return static_cast<size_t>(in.tellg());
+}

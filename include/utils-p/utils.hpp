@@ -82,3 +82,5 @@ int count_pattern(SDSL_structure &wavelet, std::map<int, int> &C, std::string &p
     if (sp > ep) return 0;
     return ep - sp + 1;
 }
+
+size_t file_size(const std::string& filename);
