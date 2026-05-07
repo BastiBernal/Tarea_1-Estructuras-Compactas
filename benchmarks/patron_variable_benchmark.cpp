@@ -7,13 +7,16 @@
 #include "bench-lib/benchmark.hpp"
 #include "fm-index/FM-index.hpp"
 #include "utils-p/utils.hpp"
+#include "fm-index/anti_wavelet.hpp"
+#include "sdsl/wavelet_trees.hpp"
+#include "wavelet/wavelet_tree.hpp"
 
 #include "fib-lib/fib_tabulated.hpp"
 #include "fib-lib/fib_memoized.hpp"
 #include "fib-lib/fib_recursive.hpp" 
 using namespace std;
 
-const string PATH = "textos/";
+const string PATH = "benchmarks/textos/";
 
 int main() {
   AbstractFM* fm_index = nullptr;
@@ -25,16 +28,15 @@ int main() {
     for (size_t j = 0; j < sizes.size(); j++){
        string pattern = build_pattern(PATH + archivos[i], sizes[j]);
        for (size_t k = 0; k < estructuras.size(); ++k){
-          if (estructuras[k] == "fm-index-sdsl"){
-            fm_index = new FMIndexSDSL<sdsl::csa_wt<wt_huff<rrr_vector<127> >, 512, 1024>>();
-          } else if (estructuras[k] == "wt"){
-            fm_index = new FMWaveletSDSL<>;
-          } else if (estructuras[k]== "fm"){
-            fm_index = new FMIndex<>;
-          } else if (estructuras[k] == ""){
-
-          } else if (estructuras[k]== ""){
-
+          if (estructuras[j] == "fm-index-sdsl"){
+            cout << "Construyendo FM-index de SDSL" << endl;
+            fm_index = new FMIndexSDSL<sdsl::csa_wt<sdsl::wt_huff<sdsl::rrr_vector<127> >, (1<<30), (1<<30)>>();
+          } else if (estructuras[j] == "wt"){
+            fm_index = new FMIndex<WaveletTreeBinary>;
+          } else if (estructuras[j]== "fuerza_bruta"){
+            fm_index = new FMIndex<AntiWavelet>;
+          } else if (estructuras[j] == "wt_blc"){
+            fm_index = new FMWaveletSDSL<sdsl::wt_blcd<>>;
           }
           fm_index->construct(PATH + archivos[i]);
           
@@ -48,7 +50,6 @@ int main() {
             if (j == 0 && i == 0) bench.write_csv("busqueda_patron_var_benchmark.csv");
             else bench.append_csv("busqueda_patron_var_benchmark.csv");
           }
-          //bench2 : calcular tiempo de busqueda del patron pequeño
 
           delete fm_index;
           fm_index = nullptr;

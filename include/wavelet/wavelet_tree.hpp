@@ -2,6 +2,7 @@
 #pragma once
 
 #include "bitvector/bitvector.hpp"
+#include "sdsl/int_vector.hpp"
 
 #include <cstdint>
 #include <memory>
@@ -16,11 +17,12 @@
 class WaveletTree {
 public:
 	WaveletTree() = default;
+	/*
 	explicit WaveletTree(const std::string& text);
 	explicit WaveletTree(const std::vector<int>& values);
-
+*/
 	void build(const std::string& text);
-	void build(const std::vector<int>& values);
+	void build(const sdsl::int_vector<>& values);
 
 	uint64_t size() const { return n_; }
 	// Aproximación del uso de memoria en RAM (en bytes), incluyendo bitvectors.
@@ -66,11 +68,12 @@ private:
 class WaveletTreeBinary {
 public:
 	WaveletTreeBinary() = default;
-	explicit WaveletTreeBinary(const std::string& text);
+	/*explicit WaveletTreeBinary(const std::string& text);
 	explicit WaveletTreeBinary(const std::vector<int>& values);
+	*/
 
 	void build(const std::string& text);
-	void build(const std::vector<int>& values);
+	void build(const sdsl::int_vector<>& values);
 
 	uint64_t size() const { return n_; }
 	// Aproximación del uso de memoria en RAM (en bytes), incluyendo bitvectors.
