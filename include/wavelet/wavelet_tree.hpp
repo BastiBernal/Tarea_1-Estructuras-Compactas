@@ -17,8 +17,10 @@ class WaveletTree {
 public:
 	WaveletTree() = default;
 	explicit WaveletTree(const std::string& text);
+	explicit WaveletTree(const std::vector<int>& values);
 
 	void build(const std::string& text);
+	void build(const std::vector<int>& values);
 
 	uint64_t size() const { return n_; }
 	// Aproximación del uso de memoria en RAM (en bytes), incluyendo bitvectors.
@@ -27,13 +29,16 @@ public:
 	bool empty() const { return n_ == 0; }
 
 	char access(uint64_t i) const;
+	int64_t access_int(uint64_t i) const;
 	uint64_t rank(char c, uint64_t i) const;
+	uint64_t rank(int value, uint64_t i) const;
 	uint64_t select(char c, uint64_t j) const;
+	uint64_t select(int value, uint64_t j) const;
 
 private:
 	struct Node {
-		unsigned char lo = 0;
-		unsigned char hi = 0;
+		int64_t lo = 0;
+		int64_t hi = 0;
 		uint64_t n = 0;
 		std::unique_ptr<BitVector> bv;
 		std::unique_ptr<Node> left;
@@ -44,9 +49,9 @@ private:
 	uint64_t n_ = 0;
 
 	static std::unique_ptr<Node> build_rec(
-		const std::vector<unsigned char>& data,
-		unsigned char lo,
-		unsigned char hi);
+		const std::vector<int64_t>& data,
+		int64_t lo,
+		int64_t hi);
 };
 
 // Implementación "pointerless/levelwise": en vez de guardar un BitVector por nodo,
@@ -62,8 +67,10 @@ class WaveletTreeBinary {
 public:
 	WaveletTreeBinary() = default;
 	explicit WaveletTreeBinary(const std::string& text);
+	explicit WaveletTreeBinary(const std::vector<int>& values);
 
 	void build(const std::string& text);
+	void build(const std::vector<int>& values);
 
 	uint64_t size() const { return n_; }
 	// Aproximación del uso de memoria en RAM (en bytes), incluyendo bitvectors.
@@ -72,14 +79,17 @@ public:
 	bool empty() const { return n_ == 0; }
 
 	char access(uint64_t i) const;
+	int64_t access_int(uint64_t i) const;
 	uint64_t rank(char c, uint64_t i) const;
+	uint64_t rank(int value, uint64_t i) const;
 	uint64_t select(char c, uint64_t j) const;
+	uint64_t select(int value, uint64_t j) const;
 
 private:
 	struct NodeInfo {
-		unsigned char lo = 0;
-		unsigned char hi = 0;
-		unsigned char mid = 0;
+		int64_t lo = 0;
+		int64_t hi = 0;
+		int64_t mid = 0;
 		uint64_t start = 0; // inicio (incl.) en el bitvector del nivel
 		uint64_t end = 0;   // fin (excl.)  en el bitvector del nivel
 		int32_t left = -1;  // índice de nodo hijo (nivel+1), o -1 si es hoja/ausente
@@ -95,15 +105,15 @@ private:
 
 	std::vector<Level> levels_;
 	uint64_t n_ = 0;
-	unsigned char min_c_ = 0;
-	unsigned char max_c_ = 0;
+	int64_t min_c_ = 0;
+	int64_t max_c_ = 0;
 
 	static int32_t build_rec(
 		std::vector<std::vector<bool>>& level_bits,
 		std::vector<std::vector<NodeInfo>>& level_nodes,
-		const std::vector<unsigned char>& data,
-		unsigned char lo,
-		unsigned char hi,
+		const std::vector<int64_t>& data,
+		int64_t lo,
+		int64_t hi,
 		uint32_t depth);
 };
 
