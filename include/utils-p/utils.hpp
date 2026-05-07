@@ -1,6 +1,7 @@
 #pragma once 
 
 #include "bitvector/bitvector.hpp"
+#include "sdsl/suffix_arrays.hpp"
 
 #include <cstdint>
 #include <memory>
@@ -10,6 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <map>
 
 std::string build_pattern(std::string filename,int large);
 
@@ -57,3 +59,26 @@ std::unique_ptr<BitVector> ConstruirBitVectorAuto(
 	const std::vector<bool>& bits,
 	BitVectorDecision* outDecision = nullptr);
 
+sdsl::int_vector<> build_bwt(std::string filename);
+
+template <typename SDSL_structure>
+int count_pattern(SDSL_structure &wavelet, std::map<int, int> &C, std::string &pattern){
+    int m = pattern.size();
+    int i = m - 1;
+    int c = pattern[m-1];
+
+    int sp = C[c]+1;
+    auto it = C.upper_bound(c);
+    int ep;
+    if (it == C.end()) ep = sp; //Si c era la ultima letra del alfabeto, entonces ep = sp
+    else ep = it->second; //Si c no era la ultima letra del alfabeto, entonces ep = C[c+1]
+
+    while ((sp<=ep) && (i>=1)){
+        c = pattern[i-1];
+        sp = C[c] + wavelet.rank(sp-1, c)+1;
+        ep = C[c] + wavelet.rank(ep, c);
+        i = i - 1;
+    }
+    if (sp > ep) return 0;
+    return ep - sp + 1;
+}

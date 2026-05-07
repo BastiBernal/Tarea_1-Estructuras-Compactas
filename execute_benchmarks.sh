@@ -1,4 +1,4 @@
 #!/bin/bash
 
 ./compile.sh
-./build/benchmarks/bench_example
+./build/benchmarks/patron_fijo_benchmark

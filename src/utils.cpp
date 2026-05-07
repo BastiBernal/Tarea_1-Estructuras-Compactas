@@ -2,6 +2,7 @@
 #include "bitvector/plain_bitvector.hpp"
 #include "bitvector/rrr_array.hpp"
 #include "bitvector/sd_array.hpp"
+#include "sdsl/suffix_arrays.hpp"
 
 #include <cmath>
 #include <cstddef>
@@ -14,7 +15,7 @@ std::string build_pattern(std::string filename,int large){
     std::ifstream in(filename, std::ios::binary);
     if (!in) {
         std::cerr << "Error al abrir el archivo\n";
-        return NULL;
+        return std::string();
     }
 
     std::string pattern(large, '\0');
@@ -22,7 +23,6 @@ std::string build_pattern(std::string filename,int large){
     in.read(&pattern[0], large);
     pattern.resize(in.gcount()); // ajusta si el archivo tiene menos de N
 
-    std::cout << pattern << std::endl;
     return pattern;
 }
 
@@ -133,4 +133,29 @@ std::unique_ptr<BitVector> ConstruirBitVectorAuto(
 	auto bv = std::make_unique<PlainBitVector>();
 	bv->build(bits);
 	return bv;
+}
+
+sdsl::int_vector<> build_bwt(std::string filename){
+    sdsl::int_vector<> seq;
+    int32_t n;
+    {
+    sdsl::load_vector_from_file(seq, filename, 1);
+    n = seq.size();
+    seq.resize(n+1);
+    n = seq.size();
+    seq[n-1] = 0; // Representa el final de texto. Suele representarse por el
+    // símbolo $
+    }
+    //cout << "Construyendo el Suffix array ..." << endl;
+    sdsl::int_vector<> sa(1, 0, sdsl::bits::hi(n)+1);
+    sa.resize(n);
+    sdsl::algorithm::calculate_sa((const unsigned char*)seq.data(), n, sa);
+    //cout << "Construyendo la BWT ..." << endl;
+    sdsl::int_vector<> bwt(1, 0, 8);
+    bwt.resize(n);
+    int32_t to_add[2] = {(int32_t)-1,n-1};
+    for (int32_t i=0; i < n; ++i)
+        bwt[i] = seq[ sa[i]+to_add[sa[i]==0] ];
+    //Constructor de las clases
+    return bwt;
 }

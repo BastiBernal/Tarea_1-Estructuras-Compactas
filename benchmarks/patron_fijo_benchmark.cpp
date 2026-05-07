@@ -7,13 +7,15 @@
 #include "bench-lib/benchmark.hpp"
 #include "fm-index/FM-index.hpp"
 #include "utils-p/utils.hpp"
+#include "fm-index/anti_wavelet.hpp"
+#include "sdsl/wavelet_trees.hpp"
 
 #include "fib-lib/fib_tabulated.hpp"
 #include "fib-lib/fib_memoized.hpp"
 #include "fib-lib/fib_recursive.hpp" 
 using namespace std;
 
-const string PATH = "textos/";
+const string PATH = "benchmarks/textos/";
 
 int main(){
   AbstractFM* fm_index = nullptr;
@@ -21,21 +23,20 @@ int main(){
   vector<string> archivos = {"dna.50MB","dna.100MB","dna.200MB","dblp.xml.50MB",
     "dblp.xml.100MB","dblp.xml.200MB", "sources.50MB","sources.100MB","sources.200MB"};
 
-  vector<string> estructuras = {"fuerza_bruta","fm-index-sdsl","wt","wthf"};
+  vector<string> estructuras = {"fm-index-sdsl"/*,"wt","w_blc","fuerza_bruta"*/};
 
   for(size_t i = 0; i < archivos.size(); ++i) {
     string pattern = build_pattern(PATH + archivos[i], 16); // Sacar un patrón pequeño del inicio del texto
     for (size_t j = 0; j < estructuras.size(); ++j){
       if (estructuras[j] == "fm-index-sdsl"){
-        fm_index = new FMIndexSDSL<sdsl::csa_wt<wt_huff<rrr_vector<127> >, 512, 1024>>();
+        fm_index = new FMIndexSDSL<sdsl::csa_wt<sdsl::wt_huff<sdsl::rrr_vector<127> >, 512, 1024>>();
       } else if (estructuras[j] == "wt"){
-        fm_index = new FMWaveletSDSL<>;
-      } else if (estructuras[j]== "fm"){
-        fm_index = new FMIndex<>;
-      } else if (estructuras[j] == ""){
-
-      } else if (estructuras[j]== ""){
-
+        continue;
+        //fm_index = new FMIndex<>;
+      } else if (estructuras[j]== "fuerza_bruta"){
+        fm_index = new FMIndex<AntiWavelet>;
+      } else if (estructuras[j] == "wt_blc"){
+        fm_index = new FMWaveletSDSL<sdsl::wt_blcd<>>;
       }
       {
         BenchLib::Benchmark bench;
@@ -63,5 +64,6 @@ int main(){
       delete fm_index;
       fm_index = nullptr;
     }
+  }  
   return 0;
 }
