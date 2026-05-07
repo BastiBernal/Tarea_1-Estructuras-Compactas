@@ -8,7 +8,12 @@ add_library(my-project STATIC
   src/fib_recursive.cpp
   src/fib_memoized.cpp
   src/fib_tabulated.cpp
-  src/FM-index.cpp
+  src/utils.cpp
+  src/anti_wavelet.cpp
+  src/plain_bitvector.cpp
+  src/rrr_array.cpp
+  src/sd_array.cpp
+  src/wavelet_tree.cpp
 )
 set(BENCHLIB_BUILD_TESTING OFF CACHE BOOL "" FORCE)
 add_subdirectory(external/bench-lib)
@@ -16,7 +21,10 @@ add_subdirectory(external/sdsl)
 
 target_include_directories(my-project PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_BINARY_DIR}/external/sdsl/external/libdivsufsort/include
 )
+
+target_link_libraries(my-project PRIVATE sdsl divsufsort divsufsort64)
 
 option(BUILD_TESTING "Build tests" ON)
 if(BUILD_TESTING)
