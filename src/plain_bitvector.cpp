@@ -1,4 +1,4 @@
-#include "plain_bitvector.hpp"
+#include "bitvector/plain_bitvector.hpp"
 
 #include <algorithm>
 #include <cstddef>
