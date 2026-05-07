@@ -8,8 +8,8 @@
 #include <limits>
 
 namespace {
-	template <typename T>
-	static std::vector<int64_t> ToSignedValues(const std::vector<T>& values) {
+	//template <typename T>
+	static std::vector<int64_t> ToSignedValues(const sdsl::int_vector<>& values) {
 		std::vector<int64_t> result;
 		result.reserve(values.size());
 		for (const auto& value : values) {
@@ -26,7 +26,7 @@ namespace {
 		return static_cast<int64_t>(value);
 	}
 }
-
+/*
 WaveletTree::WaveletTree(const std::string& text) {
 	build(text);
 }
@@ -34,6 +34,7 @@ WaveletTree::WaveletTree(const std::string& text) {
 WaveletTree::WaveletTree(const std::vector<int>& values) {
 	build(values);
 }
+*/
 
 std::unique_ptr<WaveletTree::Node> WaveletTree::build_rec(
 	const std::vector<int64_t>& data,
@@ -100,7 +101,7 @@ void WaveletTree::build(const std::string& text) {
 	root_ = build_rec(data, min_c, max_c);
 }
 
-void WaveletTree::build(const std::vector<int>& values) {
+void WaveletTree::build(const sdsl::int_vector<>& values) {
 	root_.reset();
 	n_ = static_cast<uint64_t>(values.size());
 	if (n_ == 0) return;
@@ -235,7 +236,7 @@ uint64_t WaveletTree::size_bytes() const {
 }
 
 // ---------------- WaveletTreeBinary (levelwise / pointerless) ----------------
-
+/*
 WaveletTreeBinary::WaveletTreeBinary(const std::string& text) {
 	build(text);
 }
@@ -243,7 +244,7 @@ WaveletTreeBinary::WaveletTreeBinary(const std::string& text) {
 WaveletTreeBinary::WaveletTreeBinary(const std::vector<int>& values) {
 	build(values);
 }
-
+*/
 int32_t WaveletTreeBinary::build_rec(
 	std::vector<std::vector<bool>>& level_bits,
 	std::vector<std::vector<NodeInfo>>& level_nodes,
@@ -385,7 +386,7 @@ char WaveletTreeBinary::access(uint64_t i) const {
 	return '\0';
 }
 
-void WaveletTreeBinary::build(const std::vector<int>& values) {
+void WaveletTreeBinary::build(const sdsl::int_vector<>& values) {
 	levels_.clear();
 	n_ = static_cast<uint64_t>(values.size());
 	if (n_ == 0) {
