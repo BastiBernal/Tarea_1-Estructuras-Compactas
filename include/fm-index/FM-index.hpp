@@ -19,7 +19,8 @@ class FMIndex: public AbstractFM{
 
 private:
     WaveletTree wt;
-    std::map<int,int> C; 
+    std::map<uint8_t, int> C; 
+    int size;
 
 public:
     void construct(std::string filename) override;
@@ -46,7 +47,8 @@ class FMWaveletSDSL: public AbstractFM{
 
 private:
     SDSL_wavelet wavelet;
-    std::map<int,int> C;
+    std::map<uint8_t, int> C;
+    int size ;
 
 public:
     void construct(std::string filename) override;
@@ -62,14 +64,15 @@ template <typename WaveletTree>
 void FMIndex<WaveletTree>::construct(std::string filename){
     sdsl::int_vector<> bwt = build_bwt(filename);
 
-    std::map<int, int> freq;
-    for (int i = 0; i < bwt.size(); i++) freq[bwt[i]]++;
+    std::map<uint8_t, int> freq;
+    for (size_t i = 0; i < bwt.size(); ++i) freq[(uint8_t)bwt[i]]++;
 
     int sum = 0;
     for (auto &[c, f] : freq) {
         this->C[c] = sum;
         sum += f;
     }
+    this->size = bwt.size();
     this->wt.build(bwt);
 }
 
@@ -82,21 +85,21 @@ template <typename SDSL_wavelet>
 void FMWaveletSDSL<SDSL_wavelet>::construct(std::string filename){
     sdsl::int_vector<> bwt = build_bwt(filename);
 
-    std::map<int, int> freq;
-    for (int i = 0; i < bwt.size(); i++) freq[bwt[i]]++;
+    std::map<uint8_t, int> freq;
+    for (size_t i = 0; i < bwt.size(); ++i) freq[(uint8_t)bwt[i]]++;
 
     int sum = 0;
     for (auto &[c, f] : freq) {
         this->C[c] = sum;
         sum += f;
     }
-
-    sdsl::construct_im(this->wavelet, bwt,1);
+    this->size = bwt.size();
+    sdsl::construct_im(this->wavelet, bwt);
 }
 
 template <typename WaveletTree>
 int FMIndex<WaveletTree>::count(std::string &pattern){
-    return count_pattern<WaveletTree>(this->wt, this->C, pattern);
+    return count_pattern<WaveletTree>(this->wt, this->C, pattern, this->size);
 }
 
 template <typename SDSL_structure>
@@ -106,12 +109,12 @@ int FMIndexSDSL<SDSL_structure>::count(std::string &pattern){
 
 template <typename SDSL_wavelet>
 int FMWaveletSDSL<SDSL_wavelet>::count(std::string &pattern){
-    return count_pattern<SDSL_wavelet>(this->wavelet, this->C, pattern);
+    return count_pattern_sdsl<SDSL_wavelet>(this->wavelet, this->C, pattern, this->size);
 }
 
 template <typename WaveletTree>
 int FMIndex<WaveletTree>::size_in_bytes(){
-    return this->wt.size_bytes() + this->C.size() * (sizeof(int) * 2);
+    return this->wt.size_bytes() + this->C.size() * (sizeof(int) * 2) + sizeof(int);
 }
 
 template <typename SDSL_structure>
@@ -121,5 +124,5 @@ int FMIndexSDSL<SDSL_structure>::size_in_bytes(){
 
 template <typename SDSL_wavelet>
 int FMWaveletSDSL<SDSL_wavelet>::size_in_bytes(){
-    return sdsl::size_in_mega_bytes(this->wavelet) * 1024 * 1024 + this->C.size() * (sizeof(int) * 2);
+    return sdsl::size_in_mega_bytes(this->wavelet) * 1024 * 1024 + this->C.size() * (sizeof(int) * 2) + sizeof(int);
 }

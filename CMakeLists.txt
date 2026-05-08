@@ -14,6 +14,7 @@ add_library(my-project STATIC
   src/rrr_array.cpp
   src/sd_array.cpp
   src/wavelet_tree.cpp
+  src/wavelet_binary.cpp
 )
 set(BENCHLIB_BUILD_TESTING OFF CACHE BOOL "" FORCE)
 add_subdirectory(external/bench-lib)

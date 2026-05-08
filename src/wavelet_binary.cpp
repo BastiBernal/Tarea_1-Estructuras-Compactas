@@ -1,5 +1,6 @@
 #pragma once
 #include "wavelet/wavelet_binary.hpp"
+#include "utils-p/utils.hpp"
 
 void WaveletTreePointerless::build(const sdsl::int_vector<>& values)
 {
@@ -165,7 +166,7 @@ uint64_t WaveletTreePointerless::size_bytes() const
 {
     uint64_t size = sizeof(*this);
     for (const auto& lvl : levels_) {
-        size += sizeof(Level) + lvl.bv->size_bytes();
+        size += sizeof(Level) + lvl.bv->bytes();
     }
     size += id_to_symbol_.size() * sizeof(int64_t);
     size += symbol_to_id_.size() * 24; // Estimación para unordered_map

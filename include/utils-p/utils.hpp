@@ -62,25 +62,84 @@ std::unique_ptr<BitVector> ConstruirBitVectorAuto(
 sdsl::int_vector<> build_bwt(std::string filename);
 
 template <typename SDSL_structure>
-int count_pattern(SDSL_structure &wavelet, std::map<int, int> &C, std::string &pattern){
-    int m = pattern.size();
-    int i = m - 1;
-    int c = pattern[m-1];
+int count_pattern(SDSL_structure &wavelet,std::map<uint8_t, int> &C,std::string &pattern,int size){
+    if(pattern.empty()) return 0;
 
-    int sp = C[c]+1;
-    auto it = C.upper_bound(c);
-    int ep;
-    if (it == C.end()) ep = sp; //Si c era la ultima letra del alfabeto, entonces ep = sp
-    else ep = it->second; //Si c no era la ultima letra del alfabeto, entonces ep = C[c+1]
+    int n = size;
 
-    while ((sp<=ep) && (i>=1)){
-        c = pattern[i-1];
-        sp = C[c] + wavelet.rank(sp-1, c)+1;
-        ep = C[c] + wavelet.rank(ep, c);
-        i = i - 1;
+    unsigned char c = pattern.back();
+
+    auto it = C.find(c);
+
+    if(it == C.end())
+        return 0;
+
+    int sp = it->second;
+
+    auto next = C.upper_bound(c);
+
+    int ep =
+        (next == C.end())
+        ? n
+        : next->second;
+
+    for(int i = pattern.size()-2; i >= 0; --i)
+    {
+        c = (unsigned char)pattern[i];
+
+        auto it2 = C.find(c);
+
+        if(it2 == C.end())
+            return 0;
+        sp = it2->second + wavelet.rank(sp,c);
+        ep = it2->second + wavelet.rank(ep,c);
+
+        if(sp >= ep)
+            return 0;
     }
-    if (sp > ep) return 0;
-    return ep - sp + 1;
+
+    return ep - sp;
+
 }
 
+template <typename SDSL_structure>
+int count_pattern_sdsl(SDSL_structure &wavelet,std::map<uint8_t, int> &C,std::string &pattern,int size){
+    if(pattern.empty()) return 0;
+
+    int n = size;
+
+    unsigned char c = pattern.back();
+
+    auto it = C.find(c);
+
+    if(it == C.end())
+        return 0;
+
+    int sp = it->second;
+
+    auto next = C.upper_bound(c);
+
+    int ep =
+        (next == C.end())
+        ? n
+        : next->second;
+
+    for(int i = pattern.size()-2; i >= 0; --i)
+    {
+        c = (unsigned char)pattern[i];
+
+        auto it2 = C.find(c);
+
+        if(it2 == C.end())
+            return 0;
+        sp = it2->second + wavelet.rank(sp+1,c);
+        ep = it2->second + wavelet.rank(ep+1,c);
+
+        if(sp >= ep)
+            return 0;
+    }
+
+    return ep - sp;
+
+}
 size_t file_size(const std::string& filename);

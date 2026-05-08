@@ -5,3 +5,7 @@ target_compile_options(bench_example PRIVATE -O3)
 add_executable(patron_fijo_benchmark patron_fijo_benchmark.cpp)
 target_link_libraries(patron_fijo_benchmark PRIVATE my-project bench-lib sdsl divsufsort divsufsort64)
 target_compile_options(patron_fijo_benchmark PRIVATE -O3)
+
+add_executable(patron_var_benchmark patron_variable_benchmark.cpp)
+target_link_libraries(patron_var_benchmark PRIVATE my-project bench-lib sdsl divsufsort divsufsort64)
+target_compile_options(patron_var_benchmark PRIVATE -O3)
