@@ -51,12 +51,12 @@ double CalcularEntropiaBits(double p1);
 
 // Decide qué estructura conviene según una heurística basada en entropía
 // y densidad (proporción de 1s).
-BitVectorDecision ElegirEstructuraBitVector(const std::vector<bool>& bits);
+BitVectorDecision ElegirEstructuraBitVector(const std::vector<uint8_t>& bits);
 
 // Construye y retorna un BitVector (Plain/SD/RRR) según la decisión anterior.
 // Si `outDecision` no es nullptr, también devuelve la decisión tomada.
 std::unique_ptr<BitVector> ConstruirBitVectorAuto(
-	const std::vector<bool>& bits,
+	const std::vector<uint8_t>& bits,
 	BitVectorDecision* outDecision = nullptr);
 
 sdsl::int_vector<> build_bwt(std::string filename);
@@ -91,6 +91,9 @@ int count_pattern(SDSL_structure &wavelet,std::map<uint8_t, int> &C,std::string 
 
         if(it2 == C.end())
             return 0;
+            
+        std::cout << "sp: " << sp << ", ep: " << ep << ", c: " << c << std::endl;
+        std::cout << "rank1: " << wavelet.rank(sp,c) << ", rank2: " << wavelet.rank(ep,c) << std::endl;    
         sp = it2->second + wavelet.rank(sp,c);
         ep = it2->second + wavelet.rank(ep,c);
 

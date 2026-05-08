@@ -114,7 +114,7 @@ int FMWaveletSDSL<SDSL_wavelet>::count(std::string &pattern){
 
 template <typename WaveletTree>
 int FMIndex<WaveletTree>::size_in_bytes(){
-    return this->wt.size_bytes() + this->C.size() * (sizeof(int) * 2) + sizeof(int);
+    return this->wt.size_in_bytes() + this->C.size() * (sizeof(int) * 2) + sizeof(int);
 }
 
 template <typename SDSL_structure>

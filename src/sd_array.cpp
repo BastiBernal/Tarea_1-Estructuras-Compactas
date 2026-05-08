@@ -179,24 +179,24 @@ void SDArray::build_impl(const BitSeq& bits) {
     high_superblocks[sb_n] = static_cast<uint32_t>(acc);
 }
 
-void SDArray::build(const std::vector<bool>&    bits) { build_impl(bits); }
+//void SDArray::build(const std::vector<uint8_t>&    bits) { build_impl(bits); }
 void SDArray::build(const std::vector<uint8_t>& bits) { build_impl(bits); }
 
 // ─── Operaciones públicas ────────────────────────────────────────────────────
 
-bool SDArray::access(uint64_t i) const {
+uint8_t SDArray::access(uint64_t i) const {
     if (i >= nbits) return false;
     const uint64_t r = rank1(i + 1);
     return r > 0 && value_at(r - 1) == i;
 }
 
-uint64_t SDArray::rank(bool bit, uint64_t i) const {
+uint64_t SDArray::rank(uint8_t bit, uint64_t i) const {
     if (i > nbits) i = nbits;
     const uint64_t r1 = rank1(i);
     return bit ? r1 : (i - r1);
 }
 
-uint64_t SDArray::select(bool bit, uint64_t j) const {
+uint64_t SDArray::select(uint8_t bit, uint64_t j) const {
     if (bit) {
         if (j == 0 || j > ones) return nbits;
         return value_at(j - 1);

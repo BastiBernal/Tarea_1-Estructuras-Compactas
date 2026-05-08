@@ -46,7 +46,7 @@ void WaveletTreePointerless::build(const sdsl::int_vector<>& values) {
         uint64_t z = 0;
         uint64_t o = zero_pos;
         for (uint64_t i = 0; i < n_; ++i) {
-            bool bit = (cur[i] >> shift) & 1ULL;
+            uint8_t bit = (cur[i] >> shift) & 1ULL;
             bits[i] = bit;
             if (!bit) next[z++] = cur[i];
             else      next[o++] = cur[i];
@@ -57,7 +57,7 @@ void WaveletTreePointerless::build(const sdsl::int_vector<>& values) {
     }
 }
 
-uint64_t WaveletTreePointerless::rank(int64_t c, uint64_t i) const {
+uint64_t WaveletTreePointerless::rank(int64_t i, uint64_t c) const {
     // Si i es 0, no hay elementos que contar
     if (i == 0) return 0;
     // Si i se pasa del tamaño, lo limitamos a n_
@@ -73,7 +73,7 @@ uint64_t WaveletTreePointerless::rank(int64_t c, uint64_t i) const {
     for (uint32_t level = 0; level < height_; ++level) {
         //
         const auto& lvl = levels_[level];
-        bool bit = (symbol_id >> (height_ - level - 1)) & 1ULL;
+        uint8_t bit = (symbol_id >> (height_ - level - 1)) & 1ULL;
         // Calculamos cuántos 1s hay antes de 'pos' y 'start' para ajustar la posición
         uint64_t ones_before_pos   = lvl.bv->rank(true, pos);
         uint64_t ones_before_start = lvl.bv->rank(true, start);
@@ -88,14 +88,14 @@ uint64_t WaveletTreePointerless::rank(int64_t c, uint64_t i) const {
     }
 
     return pos - start;
-}
+
     
     // Para obtener el rank real, restamos la posición donde empezaría el símbolo con rank(c, 0)
     uint64_t start_offset = 0;
     uint64_t temp_pos = 0; // Calculamos el 'left' original
     for (uint32_t level = 0; level < height_; ++level) {
         const auto& lvl = levels_[level];
-        bool bit = (symbol_id >> (height_ - level - 1)) & 1ULL;
+        uint8_t bit = (symbol_id >> (height_ - level - 1)) & 1ULL;
         if (bit) temp_pos = lvl.zero_count + lvl.bv->rank(true, temp_pos);
         else     temp_pos = temp_pos - lvl.bv->rank(true, temp_pos);
     }
@@ -111,7 +111,7 @@ int64_t WaveletTreePointerless::access(uint64_t i) const {
 
     for (uint32_t level = 0; level < height_; ++level) {
         const auto& lvl = levels_[level];
-        bool bit = lvl.bv->access(pos);
+        uint8_t bit = lvl.bv->access(pos);
 
         symbol_id <<= 1;
         if (bit) {
@@ -137,7 +137,7 @@ uint64_t WaveletTreePointerless::size_in_bytes() const {
     for (const auto& lvl : levels_) {
         total += sizeof(lvl.zero_count);
         if (lvl.bv) {
-            total += sdsl::size_in_bytes(*lvl.bv);
+            total += lvl.bv->size_in_bytes();
         }
     }
     // Overhead del vector levels_ en sí (sin contar el contenido ya contado)

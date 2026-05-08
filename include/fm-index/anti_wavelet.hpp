@@ -8,5 +8,5 @@ private:
 public:
     void build(sdsl::int_vector<> &bwt);
     int rank(int i, int c);
-    int size_bytes();
+    int size_in_bytes();
 };

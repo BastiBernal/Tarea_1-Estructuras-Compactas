@@ -53,7 +53,7 @@ std::unique_ptr<WaveletTree::Node> WaveletTree::build_rec(
 
 	const int64_t mid = lo + (hi - lo) / 2;
 
-	std::vector<bool> bits;
+	std::vector<uint8_t> bits;
 	bits.resize(data.size());
 	std::vector<int64_t> left_data;
 	std::vector<int64_t> right_data;
@@ -62,7 +62,7 @@ std::unique_ptr<WaveletTree::Node> WaveletTree::build_rec(
 
 	for (std::size_t i = 0; i < data.size(); ++i) {
 		const int64_t x = data[i];
-		const bool go_right = (x > mid);
+		const uint8_t go_right = (x > mid);
 		bits[i] = go_right;
 		if (go_right) right_data.push_back(x);
 		else left_data.push_back(x);
@@ -122,7 +122,7 @@ char WaveletTree::access(uint64_t i) const {
 	const Node* node = root_.get();
 	uint64_t pos = i;
 	while (node && node->lo != node->hi) {
-		const bool b = node->bv->access(pos);
+		const uint8_t b = node->bv->access(pos);
 		if (!b) {
 			pos = node->bv->rank(false, pos);
 			node = node->left.get();
@@ -139,7 +139,7 @@ int64_t WaveletTree::access_int(uint64_t i) const {
 	const Node* node = root_.get();
 	uint64_t pos = i;
 	while (node && node->lo != node->hi) {
-		const bool b = node->bv->access(pos);
+		const uint8_t b = node->bv->access(pos);
 		if (!b) {
 			pos = node->bv->rank(false, pos);
 			node = node->left.get();
@@ -190,7 +190,7 @@ uint64_t WaveletTree::select(int value, uint64_t j) const {
 	const int64_t uc = ToSignedValue(value);
 	const Node* node = root_.get();
 	std::vector<const Node*> path;
-	std::vector<bool> dirs;
+	std::vector<uint8_t> dirs;
 	path.reserve(16);
 	dirs.reserve(16);
 
@@ -199,7 +199,7 @@ uint64_t WaveletTree::select(int value, uint64_t j) const {
 		if (node->lo == node->hi) break;
 
 		const unsigned char mid = static_cast<unsigned char>(node->lo + (node->hi - node->lo) / 2);
-		const bool go_right = (uc > mid);
+		const uint8_t go_right = (uc > mid);
 		path.push_back(node);
 		dirs.push_back(go_right);
 		node = go_right ? node->right.get() : node->left.get();
@@ -211,7 +211,7 @@ uint64_t WaveletTree::select(int value, uint64_t j) const {
 	uint64_t pos = j; // 1-based posición en el nodo actual
 	for (std::size_t idx = path.size(); idx-- > 0;) {
 		const Node* cur = path[idx];
-		const bool dir = dirs[idx];
+		const uint8_t dir = dirs[idx];
 		const uint64_t sel = cur->bv->select(dir, pos);
 		if (sel == cur->bv->size()) return n_;
 		pos = sel + 1;
@@ -221,12 +221,12 @@ uint64_t WaveletTree::select(int value, uint64_t j) const {
 	return (ans < n_) ? ans : n_;
 }
 
-uint64_t WaveletTree::size_bytes() const {
+uint64_t WaveletTree::size_in_bytes() const {
 	uint64_t total = sizeof(WaveletTree);
 	auto node_bytes = [&](const Node* node, const auto& self) -> uint64_t {
 		if (!node) return 0;
 		uint64_t acc = sizeof(Node);
-		if (node->bv) acc += node->bv->bytes();
+		if (node->bv) acc += node->bv->size_in_bytes();
 		acc += self(node->left.get(), self);
 		acc += self(node->right.get(), self);
 		return acc;
@@ -246,7 +246,7 @@ WaveletTreeBinary::WaveletTreeBinary(const std::vector<int>& values) {
 }
 */
 int32_t WaveletTreeBinary::build_rec(
-	std::vector<std::vector<bool>>& level_bits,
+	std::vector<std::vector<uint8_t>>& level_bits,
 	std::vector<std::vector<NodeInfo>>& level_nodes,
 	const std::vector<int64_t>& data,
 	int64_t lo,
@@ -283,7 +283,7 @@ int32_t WaveletTreeBinary::build_rec(
 	bits_out.reserve(bits_out.size() + data.size());
 
 	for (int64_t x : data) {
-		const bool go_left = (x <= info.mid);
+		const uint8_t go_left = (x <= info.mid);
 		// Convención pedida: 1 => izquierdo, 0 => derecho
 		bits_out.push_back(go_left);
 		if (go_left) left_data.push_back(x);
@@ -336,7 +336,7 @@ void WaveletTreeBinary::build(const std::string& text) {
 		return;
 	}
 
-	std::vector<std::vector<bool>> level_bits;
+	std::vector<std::vector<uint8_t>> level_bits;
 	std::vector<std::vector<NodeInfo>> level_nodes;
 	build_rec(level_bits, level_nodes, data, min_c_, max_c_, 0);
 
@@ -367,7 +367,7 @@ char WaveletTreeBinary::access(uint64_t i) const {
 		if (pos >= len) return '\0';
 
 		const uint64_t global_pos = node.start + pos;
-		const bool bit = lvl.bv->access(global_pos);
+		const uint8_t bit = lvl.bv->access(global_pos);
 		const uint64_t ones_before = lvl.bv->rank(true, global_pos) - node.rank1_before;
 		if (bit) {
 			// ir a hijo izquierdo (1)
@@ -409,7 +409,7 @@ void WaveletTreeBinary::build(const sdsl::int_vector<>& values) {
 		return;
 	}
 
-	std::vector<std::vector<bool>> level_bits;
+	std::vector<std::vector<uint8_t>> level_bits;
 	std::vector<std::vector<NodeInfo>> level_nodes;
 	build_rec(level_bits, level_nodes, data, min_c_, max_c_, 0);
 
@@ -438,7 +438,7 @@ int64_t WaveletTreeBinary::access_int(uint64_t i) const {
 		if (pos >= len) return 0;
 
 		const uint64_t global_pos = node.start + pos;
-		const bool bit = lvl.bv->access(global_pos);
+		const uint8_t bit = lvl.bv->access(global_pos);
 		const uint64_t ones_before = lvl.bv->rank(true, global_pos) - node.rank1_before;
 		if (bit) {
 			pos = ones_before;
@@ -515,7 +515,7 @@ uint64_t WaveletTreeBinary::select(int value, uint64_t j) const {
 	struct Step {
 		uint32_t depth;
 		int32_t node_idx;
-		bool dir; // 1=izq, 0=der
+		uint8_t dir; // 1=izq, 0=der
 	};
 
 	std::vector<Step> path;
@@ -555,12 +555,12 @@ uint64_t WaveletTreeBinary::select(int value, uint64_t j) const {
 	return (ans < n_) ? ans : n_;
 }
 
-uint64_t WaveletTreeBinary::size_bytes() const {
+uint64_t WaveletTreeBinary::size_in_bytes() const {
 	uint64_t total = sizeof(WaveletTreeBinary);
 	// Storage del vector de niveles (objetos Level), más el contenido de cada nivel.
 	total += static_cast<uint64_t>(levels_.capacity()) * sizeof(Level);
 	for (const auto& lvl : levels_) {
-		if (lvl.bv) total += lvl.bv->bytes();
+		if (lvl.bv) total += lvl.bv->size_in_bytes();
 		total += static_cast<uint64_t>(lvl.nodes.capacity()) * sizeof(NodeInfo);
 	}
 	return total;

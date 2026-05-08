@@ -10,6 +10,7 @@
 #include "fm-index/anti_wavelet.hpp"
 #include "sdsl/wavelet_trees.hpp"
 #include "wavelet/wavelet_binary.hpp"
+#include "sdsl/suffix_arrays.hpp"
 
 #include "fib-lib/fib_tabulated.hpp"
 #include "fib-lib/fib_memoized.hpp"
@@ -24,7 +25,7 @@ int main(){
   vector<string> archivos = {"dna.50MB","dna.100MB","dna.200MB","dblp.xml.50MB",
     "dblp.xml.100MB","dblp.xml.200MB", "sources.50MB","sources.100MB","sources.200MB"};
 
-  vector<string> estructuras = {"fm-index-sdsl","wt_blc"/*,"wt"*/,"fuerza_bruta"};
+  vector<string> estructuras = {/*"fm-index-sdsl","wt_blc","fuerza_bruta",*/"wt"};
 
   int prev = NULL;
   for(size_t i = 0; i < archivos.size(); ++i) {
@@ -50,15 +51,15 @@ int main(){
    
         bench.run(20,5);
       
-        if (j == 0 && i == 0) bench.write_csv("creacion_benchmark.csv");
-        else bench.append_csv("creacion_benchmark.csv");
+        if (j == 0 && i == 0) bench.write_csv("creacion_benchmark2.csv");
+        else bench.append_csv("creacion_benchmark2.csv");
       }
   
-      //int val = fm_index->count(pattern); // Hacer un acceso para asegurar que la estructura se ha construido completamente y no hay costos de construcción ocultos en la medición de tiempo de búsqueda
-      //cout << "Valor de count para el patrón: " << val << endl;
-      //assert(val > 0); // Asegurarse de que el patrón se encuentra en el texto
-      //if (prev != NULL) assert(val == prev);
-      //prev = val; // Asegurarse de que todas las estructuras devuelven el mismo resultado
+      int val = fm_index->count(pattern); // Hacer un acceso para asegurar que la estructura se ha construido completamente y no hay costos de construcción ocultos en la medición de tiempo de búsqueda
+      cout << "Valor de count para el patrón: " << val << endl;
+      assert(val > 0); // Asegurarse de que el patrón se encuentra en el texto
+      if (prev != NULL) assert(val == prev);
+      prev = val; // Asegurarse de que todas las estructuras devuelven el mismo resultado
 
       {
         BenchLib::Benchmark bench2;
@@ -67,8 +68,8 @@ int main(){
         }).set_input_size(pattern.size()).set_label(archivos[i]).set_size_in_megabytes(fm_index->size_in_bytes() / (1024.0 * 1024.0));
         bench2.run(30,10);
 
-        if (j == 0 && i == 0) bench2.write_csv("busqueda_texto_var_benchmark.csv");
-        else bench2.append_csv("busqueda_texto_var_benchmark.csv");
+        if (j == 0 && i == 0) bench2.write_csv("busqueda_texto_var_benchmark2.csv");
+        else bench2.append_csv("busqueda_texto_var_benchmark2.csv");
       }
       //bench2 : calcular tiempo de busqueda del patron pequeño
 

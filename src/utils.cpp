@@ -61,7 +61,7 @@ double CalcularEntropiaBits(double p1) {
 	return -(p1 * std::log2(p1) + p0 * std::log2(p0));
 }
 
-BitVectorDecision ElegirEstructuraBitVector(const std::vector<bool>& bits) {
+BitVectorDecision ElegirEstructuraBitVector(const std::vector<uint8_t>& bits) {
 	BitVectorDecision d;
 	d.n = static_cast<uint64_t>(bits.size());
 	if (d.n == 0) {
@@ -106,8 +106,7 @@ BitVectorDecision ElegirEstructuraBitVector(const std::vector<bool>& bits) {
 }
 
 std::unique_ptr<BitVector> ConstruirBitVectorAuto(
-	const std::vector<uint8_t>& bits,
-	BitVectorDecision* outDecision = nullptr) {
+	const std::vector<uint8_t>& bits, BitVectorDecision* outDecision) {
 	BitVectorDecision d = ElegirEstructuraBitVector(bits);
 	if (outDecision) *outDecision = d;
 

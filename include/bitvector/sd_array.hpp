@@ -26,12 +26,12 @@ private:
     void build_impl(const BitSeq& bits);
 
 public:
-    void build(const std::vector<bool>&    bits);
+    //void build(const std::vector<uint8_t>&    bits);
     void build(const std::vector<uint8_t>& bits);
 
-    bool     access(uint64_t i)           const override;
-    uint64_t rank  (bool bit, uint64_t i) const override;
-    uint64_t select(bool bit, uint64_t j) const override;
+    uint8_t     access(uint64_t i)           const override;
+    uint64_t rank  (uint8_t bit, uint64_t i) const override;
+    uint64_t select(uint8_t bit, uint64_t j) const override;
     uint64_t size  ()                     const override;
     uint64_t size_in_bytes()              const override;
 };

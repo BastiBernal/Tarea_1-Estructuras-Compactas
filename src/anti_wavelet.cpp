@@ -13,6 +13,6 @@ int AntiWavelet::rank(int i, int c){
     return count;
 }
 
-int AntiWavelet::size_bytes(){
+int AntiWavelet::size_in_bytes(){
     return size_in_mega_bytes(this->text) * 1024 * 1024;
 }

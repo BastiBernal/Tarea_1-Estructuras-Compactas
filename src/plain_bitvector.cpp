@@ -101,7 +101,7 @@ uint64_t PlainBitVector::select0(uint64_t j) const {
 	return nbits;
 }
 
-void PlainBitVector::build(const std::vector<bool>& bits) {
+void PlainBitVector::build(const std::vector<uint8_t>& bits) {
 	nbits = static_cast<uint64_t>(bits.size());
 	const uint64_t word_count = (nbits + 63) / 64;
 	data.assign(static_cast<std::size_t>(word_count), 0);
@@ -131,18 +131,18 @@ void PlainBitVector::build(const std::vector<bool>& bits) {
 	ones = acc;
 }
 
-bool PlainBitVector::access(uint64_t i) const {
+uint8_t PlainBitVector::access(uint64_t i) const {
 	if (i >= nbits) return false;
 	return (data[static_cast<std::size_t>(i / 64)] >> (i % 64)) & 1ULL;
 }
 
-uint64_t PlainBitVector::rank(bool bit, uint64_t i) const {
+uint64_t PlainBitVector::rank(uint8_t bit, uint64_t i) const {
 	if (i > nbits) i = nbits;
 	const uint64_t r1 = rank1(i);
 	return bit ? r1 : (i - r1);
 }
 
-uint64_t PlainBitVector::select(bool bit, uint64_t j) const {
+uint64_t PlainBitVector::select(uint8_t bit, uint64_t j) const {
 	return bit ? select1(j) : select0(j);
 }
 

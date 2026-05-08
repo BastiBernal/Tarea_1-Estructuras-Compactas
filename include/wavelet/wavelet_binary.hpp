@@ -33,7 +33,7 @@ public:
 
     void build(const sdsl::int_vector<>& values);
 
-    uint64_t rank(int64_t c, uint64_t i) const;
+    uint64_t rank(int64_t i, uint64_t c) const;
 
     int64_t access(uint64_t i) const;
 

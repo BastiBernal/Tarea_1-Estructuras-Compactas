@@ -133,24 +133,24 @@ void RRRArray::build_impl(const BitSeq& bits) {
     ones = acc;
 }
 
-void RRRArray::build(const std::vector<bool>&    bits) { build_impl(bits); }
+//void RRRArray::build(const std::vector<uint8_t>&    bits) { build_impl(bits); }
 void RRRArray::build(const std::vector<uint8_t>& bits) { build_impl(bits); }
 
 // ─── Operaciones públicas ────────────────────────────────────────────────────
 
-bool RRRArray::access(uint64_t i) const {
+uint8_t RRRArray::access(uint64_t i) const {
     if (i >= nbits) return false;
     const uint16_t mask = block_mask(i / kBlockSize);
     return (mask >> (i % kBlockSize)) & 1U;
 }
 
-uint64_t RRRArray::rank(bool bit, uint64_t i) const {
+uint64_t RRRArray::rank(uint8_t bit, uint64_t i) const {
     if (i > nbits) i = nbits;
     const uint64_t r1 = rank1(i);
     return bit ? r1 : (i - r1);
 }
 
-uint64_t RRRArray::select(bool bit, uint64_t j) const {
+uint64_t RRRArray::select(uint8_t bit, uint64_t j) const {
     if (j == 0) return nbits;
 
     if (bit) {

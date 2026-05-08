@@ -6,9 +6,9 @@
 class BitVector {
 public:
     virtual ~BitVector() {}
-    virtual bool access(uint64_t i) const = 0;
-    virtual uint64_t rank(bool bit, uint64_t i) const = 0;
-    virtual uint64_t select(bool bit, uint64_t j) const = 0;
+    virtual uint8_t access(uint64_t i) const = 0;
+    virtual uint64_t rank(uint8_t bit, uint64_t i) const = 0;
+    virtual uint64_t select(uint8_t bit, uint64_t j) const = 0;
     virtual uint64_t size() const = 0;
     // Aproximación del uso de memoria en RAM (en bytes), incluyendo buffers internos.
     // Nota: no incluye overhead del allocator.

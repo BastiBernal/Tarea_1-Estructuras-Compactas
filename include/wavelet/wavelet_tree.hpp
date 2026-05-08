@@ -27,7 +27,7 @@ public:
 	uint64_t size() const { return n_; }
 	// Aproximación del uso de memoria en RAM (en bytes), incluyendo bitvectors.
 	// Nota: no incluye overhead del allocator.
-	uint64_t size_bytes() const;
+	uint64_t size_in_bytes() const;
 	bool empty() const { return n_ == 0; }
 
 	char access(uint64_t i) const;
@@ -78,7 +78,7 @@ public:
 	uint64_t size() const { return n_; }
 	// Aproximación del uso de memoria en RAM (en bytes), incluyendo bitvectors.
 	// Nota: no incluye overhead del allocator.
-	uint64_t size_bytes() const;
+	uint64_t size_in_bytes() const;
 	bool empty() const { return n_ == 0; }
 
 	char access(uint64_t i) const;
@@ -112,7 +112,7 @@ private:
 	int64_t max_c_ = 0;
 
 	static int32_t build_rec(
-		std::vector<std::vector<bool>>& level_bits,
+		std::vector<std::vector<uint8_t>>& level_bits,
 		std::vector<std::vector<NodeInfo>>& level_nodes,
 		const std::vector<int64_t>& data,
 		int64_t lo,
