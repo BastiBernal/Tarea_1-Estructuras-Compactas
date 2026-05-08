@@ -106,8 +106,8 @@ BitVectorDecision ElegirEstructuraBitVector(const std::vector<bool>& bits) {
 }
 
 std::unique_ptr<BitVector> ConstruirBitVectorAuto(
-	const std::vector<bool>& bits,
-	BitVectorDecision* outDecision) {
+	const std::vector<uint8_t>& bits,
+	BitVectorDecision* outDecision = nullptr) {
 	BitVectorDecision d = ElegirEstructuraBitVector(bits);
 	if (outDecision) *outDecision = d;
 

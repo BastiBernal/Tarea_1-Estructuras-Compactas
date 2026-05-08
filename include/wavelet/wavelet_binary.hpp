@@ -37,5 +37,5 @@ public:
 
     int64_t access(uint64_t i) const;
 
-    uint64_t size_bytes() const;
+    uint64_t size_in_bytes() const;
 };
