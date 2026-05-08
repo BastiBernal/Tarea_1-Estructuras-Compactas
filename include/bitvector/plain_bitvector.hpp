@@ -23,7 +23,7 @@ public:
     uint64_t rank(bool bit, uint64_t i) const override;
     uint64_t select(bool bit, uint64_t j) const override;
     uint64_t size() const override;
-    uint64_t bytes() const override;
+    uint64_t size_in_bytes() const override;
 };
 
 #endif // PLAIN_BITVECTOR_HPP

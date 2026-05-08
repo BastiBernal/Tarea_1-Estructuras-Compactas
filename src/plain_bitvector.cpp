@@ -150,7 +150,7 @@ uint64_t PlainBitVector::size() const {
 	return nbits;
 }
 
-uint64_t PlainBitVector::bytes() const {
+uint64_t PlainBitVector::size_in_bytes() const {
 	uint64_t total = sizeof(PlainBitVector);
 	total += static_cast<uint64_t>(data.capacity()) * sizeof(uint64_t);
 	total += static_cast<uint64_t>(superblocks.capacity()) * sizeof(uint32_t);
