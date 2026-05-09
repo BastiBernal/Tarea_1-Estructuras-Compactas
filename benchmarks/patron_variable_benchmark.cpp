@@ -10,6 +10,7 @@
 #include "fm-index/anti_wavelet.hpp"
 #include "sdsl/wavelet_trees.hpp"
 #include "wavelet/wavelet_tree.hpp"
+#include "wavelet/wavelet_binary.hpp"
 
 #include "fib-lib/fib_tabulated.hpp"
 #include "fib-lib/fib_memoized.hpp"
@@ -29,7 +30,7 @@ int main() {
       if (estructuras[k] == "fm-index-sdsl"){
             fm_index = new FMIndexSDSL<sdsl::csa_wt<sdsl::wt_huff<sdsl::rrr_vector<127> >, (1<<30), (1<<30)>>();
           } else if (estructuras[k] == "wt"){
-            fm_index = new FMIndex<WaveletTreeBinary>;
+            fm_index = new FMIndex<WaveletTreePointerless>;
           } else if (estructuras[k]== "fuerza_bruta"){
             fm_index = new FMIndex<AntiWavelet>;
           } else if (estructuras[k] == "wt_blc"){
@@ -37,12 +38,9 @@ int main() {
           }
           fm_index->construct(PATH + archivos[i]);
       for (size_t j = 0; j < sizes.size(); j++){
-          //prev = NULL;
-          string pattern = build_pattern(PATH + archivos[i], sizes[j]);
+          string pattern = build_pattern(PATH + archivos[i], sizes[j]); //Se construye el patrón
           int val = fm_index->count(pattern); // Hacer un acceso para asegurar que la estructura se ha construido completamente y no hay costos de construcción ocultos en la medición de tiempo de búsqueda
           assert(val > 0); // Asegurarse de que el patrón se encuentra en el texto
-          //if (prev != NULL) assert(val == prev);
-          //prev = val; // Asegurarse de que todas las estructuras devuelven el mismo resultado
           {
             BenchLib::Benchmark bench;
             bench.add("Busqueda en" + estructuras[k], [&fm_index, &pattern]() {
@@ -50,8 +48,8 @@ int main() {
             }).set_input_size(pattern.size()).set_label(archivos[i]).set_size_in_megabytes(fm_index->size_in_bytes() / (1024.0 * 1024.0));
             bench.run(30,10);
 
-            if (j == 0 && i == 0 && k == 0) bench.write_csv("busqueda_patron_var_benchmark2.csv");
-            else bench.append_csv("busqueda_patron_var_benchmark2.csv");
+            if (j == 0 && i == 0 && k == 0) bench.write_csv("busqueda_patron_var_benchmark4.csv");
+            else bench.append_csv("busqueda_patron_var_benchmark4.csv");
           }
         }
         delete fm_index;

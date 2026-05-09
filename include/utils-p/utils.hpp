@@ -91,9 +91,7 @@ int count_pattern(SDSL_structure &wavelet,std::map<uint8_t, int> &C,std::string 
 
         if(it2 == C.end())
             return 0;
-            
-        std::cout << "sp: " << sp << ", ep: " << ep << ", c: " << c << std::endl;
-        std::cout << "rank1: " << wavelet.rank(sp,c) << ", rank2: " << wavelet.rank(ep,c) << std::endl;    
+  
         sp = it2->second + wavelet.rank(sp,c);
         ep = it2->second + wavelet.rank(ep,c);
 

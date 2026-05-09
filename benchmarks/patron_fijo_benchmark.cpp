@@ -25,7 +25,7 @@ int main(){
   vector<string> archivos = {"dna.50MB","dna.100MB","dna.200MB","dblp.xml.50MB",
     "dblp.xml.100MB","dblp.xml.200MB", "sources.50MB","sources.100MB","sources.200MB"};
 
-  vector<string> estructuras = {/*"fm-index-sdsl","wt_blc","fuerza_bruta",*/"wt"};
+  vector<string> estructuras = {"fm-index-sdsl","wt_blc","fuerza_bruta","wt"};
 
   int prev = NULL;
   for(size_t i = 0; i < archivos.size(); ++i) {
@@ -33,6 +33,7 @@ int main(){
     string pattern = build_pattern(PATH + archivos[i],8); // Sacar un patrón pequeño del inicio del texto
     for (size_t j = 0; j < estructuras.size(); ++j){
       std:: cout << "Benchmarking " << estructuras[j] << " con el archivo " << archivos[i] << std::endl;
+      // Se define el tipo de solución 
       if (estructuras[j] == "fm-index-sdsl"){
         fm_index = new FMIndexSDSL<sdsl::csa_wt<sdsl::wt_huff<sdsl::rrr_vector<127> >, (1<<30), (1<<30)>>();
       } else if (estructuras[j] == "wt"){
@@ -51,9 +52,9 @@ int main(){
    
         bench.run(20,5);
       
-        if (j == 0 && i == 0) bench.write_csv("creacion_benchmark2.csv");
-        else bench.append_csv("creacion_benchmark2.csv");
-      }
+        if (j == 0 && i == 0) bench.write_csv("creacion_benchmark.csv");
+        else bench.append_csv("creacion_benchmark.csv");
+      } // Benchmark de construcción
   
       int val = fm_index->count(pattern); // Hacer un acceso para asegurar que la estructura se ha construido completamente y no hay costos de construcción ocultos en la medición de tiempo de búsqueda
       cout << "Valor de count para el patrón: " << val << endl;
@@ -68,8 +69,8 @@ int main(){
         }).set_input_size(pattern.size()).set_label(archivos[i]).set_size_in_megabytes(fm_index->size_in_bytes() / (1024.0 * 1024.0));
         bench2.run(30,10);
 
-        if (j == 0 && i == 0) bench2.write_csv("busqueda_texto_var_benchmark2.csv");
-        else bench2.append_csv("busqueda_texto_var_benchmark2.csv");
+        if (j == 0 && i == 0) bench2.write_csv("busqueda_texto_var_benchmark.csv");
+        else bench2.append_csv("busqueda_texto_var_benchmark.csv");
       }
       //bench2 : calcular tiempo de busqueda del patron pequeño
 
