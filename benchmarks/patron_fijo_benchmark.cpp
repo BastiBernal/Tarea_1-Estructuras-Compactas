@@ -12,9 +12,6 @@
 #include "wavelet/wavelet_binary.hpp"
 #include "sdsl/suffix_arrays.hpp"
 
-#include "fib-lib/fib_tabulated.hpp"
-#include "fib-lib/fib_memoized.hpp"
-#include "fib-lib/fib_recursive.hpp" 
 using namespace std;
 
 const string PATH = "benchmarks/textos/";

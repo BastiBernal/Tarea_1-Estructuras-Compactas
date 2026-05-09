@@ -61,6 +61,7 @@ std::unique_ptr<BitVector> ConstruirBitVectorAuto(
 
 sdsl::int_vector<> build_bwt(std::string filename);
 
+// Se implementa en .hpp por uso de templates, se utiliza el algoritmo prestado por el profesor
 template <typename SDSL_structure>
 int count_pattern(SDSL_structure &wavelet,std::map<uint8_t, int> &C,std::string &pattern,int size){
     if(pattern.empty()) return 0;
@@ -103,6 +104,7 @@ int count_pattern(SDSL_structure &wavelet,std::map<uint8_t, int> &C,std::string 
 
 }
 
+//Version adaptada para estructuras de SDSL, que tienen rank con base 1 en vez de base 0
 template <typename SDSL_structure>
 int count_pattern_sdsl(SDSL_structure &wavelet,std::map<uint8_t, int> &C,std::string &pattern,int size){
     if(pattern.empty()) return 0;

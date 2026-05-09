@@ -1,17 +1,11 @@
-# Template básico para realizar pruebas y/o librerías en el curso de Estructuras de Datos Compactas (UdeC)
+# Proyecto
+Para el trabajo se utilizo el template provisto por el ayudante de la asignatura, en la carpeta src podemos ver las implementaciones de nuestro codigo y en la carpeta include los headers de estos.
+En la carpeta benchmark esta el codigo que ejecuto las pruebas
 
-## ¿Qué posee el template?
-Tienen ejemplos básicos para generar una librería, como utilizar cada carpeta, como utilizar CMakeLists. Además, viene integrado una librería de benchmark para que pueda facilitar su trabajo al momento de realizar las pruebas de rendimiento pedidas en el curso. Esta libreríá genera un csv que luego pueden plotear en su herramienta favorita (viene como ejemplo el poder graficar utilizando gnuplot, el cual debe estar instalado en su pc).
+# Como ejecutar las pruebas
 
-## ¿Cómo usar el template?
-```
-git clone https://github.com/bletelier/template-curso-cds.git
-cp -r template-curso-cds mi-proyecto
-cd mi-proyecto
-chmod +x initialize_project.sh
-./initialize_project.sh
-./compile.sh
-./execute_benchmarks.sh
-./plot.sh
-./execute_tests.sh
-```
+Requisitos: Make , CMake 3.28, C++ 17+, github
+Se recomienda fuertemente ejecutar en linux o en WSL, en windows es más probable que haya
+incompatibilidad con la versión de algunas dependencias.
+
+-Para ejecutar hay que ejecutar "initialize_project.sh" y luego "execute_benchmarks.sh", los resultados estarán en la carpeta results.

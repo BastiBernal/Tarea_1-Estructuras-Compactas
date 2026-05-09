@@ -5,15 +5,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_library(my-project STATIC
-  src/fib_recursive.cpp
-  src/fib_memoized.cpp
-  src/fib_tabulated.cpp
   src/utils.cpp
   src/anti_wavelet.cpp
   src/plain_bitvector.cpp
   src/rrr_array.cpp
   src/sd_array.cpp
-  src/wavelet_tree.cpp
   src/wavelet_binary.cpp
 )
 set(BENCHLIB_BUILD_TESTING OFF CACHE BOOL "" FORCE)
@@ -27,11 +23,6 @@ target_include_directories(my-project PUBLIC
 
 target_link_libraries(my-project PRIVATE sdsl divsufsort divsufsort64)
 
-option(BUILD_TESTING "Build tests" ON)
-if(BUILD_TESTING)
-  enable_testing()
-  add_subdirectory(tests)
-endif()
 
 option(BUILD_BENCHMARKS "Build benchmarks" ON)
 if(BUILD_BENCHMARKS)

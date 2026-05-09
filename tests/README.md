@@ -1,1 +1,0 @@
-# Aquí se testearán las librerías creadas, deben existir archivos .cpp con main y que posean asserts, que serán testeados usando ctest.

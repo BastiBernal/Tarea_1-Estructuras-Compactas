@@ -9,12 +9,8 @@
 #include "utils-p/utils.hpp"
 #include "fm-index/anti_wavelet.hpp"
 #include "sdsl/wavelet_trees.hpp"
-#include "wavelet/wavelet_tree.hpp"
 #include "wavelet/wavelet_binary.hpp"
 
-#include "fib-lib/fib_tabulated.hpp"
-#include "fib-lib/fib_memoized.hpp"
-#include "fib-lib/fib_recursive.hpp" 
 using namespace std;
 
 const string PATH = "benchmarks/textos/";

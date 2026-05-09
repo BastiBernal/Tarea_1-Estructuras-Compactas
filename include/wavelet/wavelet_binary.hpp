@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <memory>
 
-
+// Implementación de un wavelet tree sin punteros usando el vector de bitvectors
 class WaveletTreePointerless
 {
 private:
